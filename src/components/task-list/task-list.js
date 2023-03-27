@@ -1,10 +1,15 @@
 import React from "react";
 import Task from "../task";
+import PropTypes from "prop-types";
+
 import "./task-list.css";
 
-const TaskList = ({ todos, onDeleted, 
-                    onToggleDone, onEdit,
-                    onSubmitChanges }) => {
+const TaskList = ({ todos,
+                    onToggleDone,
+                    updateTaskDate,
+                    updateInterval, 
+                    onEdit, onSubmitChanges,
+                    onDeleted }) => {
 
   const elements = todos.map((item) => {
 
@@ -14,10 +19,12 @@ const TaskList = ({ todos, onDeleted,
       <li key={id}>
         <Task { ...itemProps }
               id={ id }
-              onDeleted={ () => onDeleted(id) }
               onToggleDone={ () => onToggleDone(id) }
+              updateTaskDate={ updateTaskDate }
+              updateInterval={ updateInterval }
               onEdit={ () => onEdit(id) }
-              onSubmitChanges={ onSubmitChanges } />
+              onSubmitChanges={ onSubmitChanges }
+              onDeleted={ () => onDeleted(id) } />
       </li>
     );
   });
@@ -27,6 +34,14 @@ const TaskList = ({ todos, onDeleted,
       { elements }
     </ul>
   );
+};
+
+TaskList.defaultProps = {
+  todos: []
+};
+
+TaskList.propTypes = {
+  todos: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default TaskList;

@@ -8,6 +8,7 @@ import "./app.css"
 export default class App extends Component {
 
   maxId = 1;
+  updateInterval = 60000;
 
   state = {
     todoData: []
@@ -16,11 +17,22 @@ export default class App extends Component {
   createTask(label) {
     return {
       label,
+      date: new Date(),
       done: false,
       edit: false,
       hide: false,
       id: this.maxId++
     };
+  };
+
+  updateTaskDate = () => {
+    this.setState(({ todoData }) => {
+      const newArr = [];
+      todoData.forEach((el) => newArr.push(el));
+      return {
+        todoData: newArr 
+      };
+    });
   };
   
   toggleProperty = (arr, id, propertyName, label = null) => {
@@ -183,16 +195,18 @@ export default class App extends Component {
       <div className="todoapp">
         <AppHeader onAddedTask={ this.addTask }
                  onSubmitChanges={ this.onSubmitChanges } />
-        <AppMain todos={ this.state.todoData }
-                 onDeleted={ this.deleteTask }
+        <AppMain todos={ todoData }
                  onToggleDone={ this.onToggleDone }
+                 updateTaskDate={ this.updateTaskDate }
+                 updateInterval={ this.updateInterval }
                  onEdit={ this.onEditTask }
                  onSubmitChanges={ this.onSubmitChanges }
+                 onDeleted={ this.deleteTask }
                  itemsLeft={ itemsLeft }
-                 onClearCompleted={ this.onClearCompleted }
-                 onSelectedCompletedFilter={ this.onSelectedCompletedFilter }
+                 onSelectedAllFilter={ this.onSelectedAllFilter }
                  onSelectedActiveFilter={ this.onSelectedActiveFilter }
-                 onSelectedAllFilter={ this.onSelectedAllFilter } />
+                 onSelectedCompletedFilter={ this.onSelectedCompletedFilter }
+                 onClearCompleted={ this.onClearCompleted } />
       </div>
     );
   };

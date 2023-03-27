@@ -5,26 +5,31 @@ import AppFooter from "../app-footer";
 
 import "./app-main.css";
 
-const AppMain = ({ todos, onDeleted, 
-                   onToggleDone, onEdit, 
-                   onSubmitChanges,
+const AppMain = ({ todos, 
+                   onToggleDone,
+                   updateTaskDate,
+                   updateInterval,
+                   onEdit, onSubmitChanges,
+                   onDeleted,
                    itemsLeft,
-                   onClearCompleted,
-                   onSelectedCompletedFilter,
+                   onSelectedAllFilter,
                    onSelectedActiveFilter,
-                   onSelectedAllFilter }) => {
+                   onSelectedCompletedFilter,
+                   onClearCompleted, }) => {
   return (
     <div className="main">
       <TaskList todos={ todos }
-                onDeleted={ onDeleted }
                 onToggleDone={ onToggleDone }
+                updateTaskDate={ updateTaskDate }
+                updateInterval={ updateInterval }
                 onEdit={ onEdit }
-                onSubmitChanges={ onSubmitChanges } />
+                onSubmitChanges={ onSubmitChanges }
+                onDeleted={ onDeleted } />
       <AppFooter itemsLeft={ itemsLeft }
-                onClearCompleted={ onClearCompleted }
-                onSelectedCompletedFilter={ onSelectedCompletedFilter }
+                onSelectedAllFilter={ onSelectedAllFilter }
                 onSelectedActiveFilter={ onSelectedActiveFilter }
-                onSelectedAllFilter={ onSelectedAllFilter } />
+                onSelectedCompletedFilter={ onSelectedCompletedFilter }
+                onClearCompleted={ onClearCompleted } />
     </div>
   );
 };

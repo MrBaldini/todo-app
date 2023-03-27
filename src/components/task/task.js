@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import PropTypes from "prop-types";
 
 import "./task.css";
 
@@ -7,6 +8,33 @@ export default class Task extends Component {
 
   state = {
     label: ""
+  };
+
+  static defaultProps = {
+    updateInterval: 60000,
+    updateTaskDate: () => {},
+    onSubmitChanges: () => {},
+    onToggleDone: () => {},
+    onDeleted: () => {},
+    onEdit: () => {}
+  };
+
+  static propTypes = {
+    updateInterval: PropTypes.number,
+    updateTaskDate: PropTypes.func,
+    onSubmitChanges: PropTypes.func,
+    onToggleDone: PropTypes.func,
+    onDeleted: PropTypes.func,
+    onEdit: PropTypes.func
+  };
+
+  componentDidMount() {
+    const { updateInterval, updateTaskDate } = this.props;
+    this.refreshTaskDate = setInterval(updateTaskDate, updateInterval);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.refreshTaskDate);
   };
 
   onLabelChange = (e) => {
@@ -26,12 +54,11 @@ export default class Task extends Component {
   };
 
   render() {
-    const { label, onDeleted, 
+    const { label, date,
             onToggleDone, done,
-            onEdit, edit, hide } = this.props;
-    const date = formatDistanceToNow(new Date(), {
-      addSuffix: true,
-    });
+            onDeleted,
+            onEdit, edit,
+            hide } = this.props;
 
     let classNames;
     if (done) classNames = "completed";
@@ -51,7 +78,10 @@ export default class Task extends Component {
               { label }
             </span>
             <span className="created">
-              created { date }
+              created { formatDistanceToNow(date, {
+                includeSeconds: true,
+                addSuffix: true,
+              }) }
             </span>
           </label>
           <button className="icon icon-edit"
