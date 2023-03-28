@@ -1,75 +1,80 @@
 import React, { Component } from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
-import "./tasks-filter.css";
+import './tasks-filter.css';
 
 export default class TasksFilter extends Component {
-
-  static defaultProps = {
-    onSelectedAllFilter: () => {},
-    onSelectedActiveFilter: () => {},
-    onSelectedCompletedFilter: () => {}
-  };
-
-  static propTypes = {
-    onSelectedAllFilter: PropTypes.func,
-    onSelectedActiveFilter: PropTypes.func,
-    onSelectedCompletedFilter: PropTypes.func 
-  };
-
-  state = {
-    classNameOfAll: "",
-    classNameOfActive: "",
-    classNameOfCompleted: "",
-  };
+  constructor() {
+    super();
+    this.state = {
+      classNameOfAll: '',
+      classNameOfActive: '',
+      classNameOfCompleted: '',
+    };
+  }
 
   onSelectedAll = () => {
-    this.props.onSelectedAllFilter();
-
+    const { onSelectedAllFilter } = this.props;
+    onSelectedAllFilter();
     this.setState({
-      classNameOfAll: "selected",
-      classNameOfActive: "",
-      classNameOfCompleted: ""
+      classNameOfAll: 'selected',
+      classNameOfActive: '',
+      classNameOfCompleted: '',
     });
   };
 
   onSelectedActive = () => {
-    this.props.onSelectedActiveFilter();
-
+    const { onSelectedActiveFilter } = this.props;
+    onSelectedActiveFilter();
     this.setState({
-      classNameOfAll: "",
-      classNameOfActive: "selected",
-      classNameOfCompleted: ""
+      classNameOfAll: '',
+      classNameOfActive: 'selected',
+      classNameOfCompleted: '',
     });
   };
 
   onSelectedCompleted = () => {
-    this.props.onSelectedCompletedFilter();
-    
+    const { onSelectedCompletedFilter } = this.props;
+    onSelectedCompletedFilter();
     this.setState({
-      classNameOfAll: "",
-      classNameOfActive: "",
-      classNameOfCompleted: "selected"
+      classNameOfAll: '',
+      classNameOfActive: '',
+      classNameOfCompleted: 'selected',
     });
   };
-  
-  render() {
 
+  render() {
+    const { classNameOfAll, classNameOfActive, classNameOfCompleted } = this.state;
     return (
       <ul className="filters">
         <li>
-          <button className={ this.state.classNameOfAll }
-                  onClick={ this.onSelectedAll }>All</button>
+          <button type="button" className={classNameOfAll} onClick={this.onSelectedAll}>
+            All
+          </button>
         </li>
         <li>
-          <button className={ this.state.classNameOfActive } 
-                  onClick={ this.onSelectedActive }>Active</button>
+          <button type="button" className={classNameOfActive} onClick={this.onSelectedActive}>
+            Active
+          </button>
         </li>
         <li>
-          <button className={ this.state.classNameOfCompleted } 
-                  onClick={ this.onSelectedCompleted }>Completed</button>
+          <button type="button" className={classNameOfCompleted} onClick={this.onSelectedCompleted}>
+            Completed
+          </button>
         </li>
       </ul>
     );
-  };
+  }
+}
+
+TasksFilter.defaultProps = {
+  onSelectedAllFilter: () => {},
+  onSelectedActiveFilter: () => {},
+  onSelectedCompletedFilter: () => {},
+};
+
+TasksFilter.propTypes = {
+  onSelectedAllFilter: PropTypes.func,
+  onSelectedActiveFilter: PropTypes.func,
+  onSelectedCompletedFilter: PropTypes.func,
 };

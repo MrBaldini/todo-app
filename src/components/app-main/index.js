@@ -1,3 +1,3 @@
-import AppMain from "./app-main";
+import AppMain from './app-main';
 
 export default AppMain;

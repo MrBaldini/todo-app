@@ -1,34 +1,40 @@
-import React from "react";
-import PropTypes from "prop-types";
-import TasksFilter from "../tasks-filters";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import "./app-footer.css";
+import TasksFilter from '../tasks-filters';
 
-const AppFooter = ({ itemsLeft, 
-                     onClearCompleted,
-                     onSelectedCompletedFilter,
-                     onSelectedActiveFilter,
-                     onSelectedAllFilter }) => {
+import './app-footer.css';
+
+function AppFooter({
+  itemsLeft,
+  onClearCompleted,
+  onSelectedCompletedFilter,
+  onSelectedActiveFilter,
+  onSelectedAllFilter,
+}) {
   return (
     <div className="footer">
-      <span className="todo-count">{ itemsLeft } items left</span>
-      <TasksFilter onSelectedCompletedFilter={ onSelectedCompletedFilter }
-                   onSelectedActiveFilter={ onSelectedActiveFilter }
-                   onSelectedAllFilter={ onSelectedAllFilter } />
-      <button className="clear-completed"
-              onClick={ onClearCompleted }>Clear completed</button>
+      <span className="todo-count">{itemsLeft} items left</span>
+      <TasksFilter
+        onSelectedCompletedFilter={onSelectedCompletedFilter}
+        onSelectedActiveFilter={onSelectedActiveFilter}
+        onSelectedAllFilter={onSelectedAllFilter}
+      />
+      <button type="button" className="clear-completed" onClick={onClearCompleted}>
+        Clear completed
+      </button>
     </div>
   );
-};
+}
 
 AppFooter.defaultProps = {
   itemsLeft: 0,
-  onClearCompleted: () => {}
+  onClearCompleted: () => {},
 };
 
 AppFooter.propTypes = {
   itemsLeft: PropTypes.number,
-  onClearCompleted: PropTypes.func
+  onClearCompleted: PropTypes.func,
 };
 
 export default AppFooter;
