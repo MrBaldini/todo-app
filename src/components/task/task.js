@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import PropTypes from 'prop-types';
 
+import Timer from '../timer';
 import './task.css';
 
 export default class Task extends Component {
@@ -37,7 +38,7 @@ export default class Task extends Component {
 
   render() {
     const { onToggleDone, id, onDeleted, onEdit, item } = this.props;
-    const { label, date, done, edit, hide } = item;
+    const { label, timerMin, timerSec, date, done, edit, hide } = item;
 
     let classNames;
     if (done) classNames = 'completed';
@@ -49,8 +50,11 @@ export default class Task extends Component {
         <div className="view">
           <input className="toggle" type="checkbox" onChange={onToggleDone} checked={done} />
           <label htmlFor={id}>
-            <span className="description">{label}</span>
-            <span className="created">
+            <span className="title">{label}</span>
+            <span className="description">
+              <Timer timerMin={timerMin} timerSec={timerSec} />
+            </span>
+            <span className="description">
               created{' '}
               {formatDistanceToNow(date, {
                 includeSeconds: true,
@@ -58,8 +62,8 @@ export default class Task extends Component {
               })}
             </span>
           </label>
-          <button type="button" aria-label="Edit" className="icon icon-edit" onClick={onEdit} />
-          <button type="button" aria-label="Delete" className="icon icon-destroy" onClick={onDeleted} />
+          <button className="icon icon-edit" type="button" aria-label="Edit" onClick={onEdit} />
+          <button className="icon icon-destroy" type="button" aria-label="Delete" onClick={onDeleted} />
         </div>
         <form onSubmit={this.onSubmit}>
           <input

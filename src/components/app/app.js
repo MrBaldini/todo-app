@@ -94,8 +94,8 @@ export default class App extends Component {
     });
   };
 
-  addTask = (text) => {
-    const newItem = this.createTask(text);
+  addTask = (text, timerMin, timerSec) => {
+    const newItem = this.createTask(text, timerMin, timerSec);
 
     this.setState(({ todoData }) => {
       const newArr = [...todoData, newItem];
@@ -162,9 +162,11 @@ export default class App extends Component {
     });
   };
 
-  createTask(label) {
+  createTask(label, timerMin, timerSec) {
     return {
       label,
+      timerMin,
+      timerSec,
       date: new Date(),
       done: false,
       edit: false,
