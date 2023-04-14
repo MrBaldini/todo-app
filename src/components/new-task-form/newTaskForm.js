@@ -20,13 +20,13 @@ export default class NewTaskForm extends Component {
 
   onTimerMinChange = (e) => {
     this.setState({
-      timerMin: e.target.value,
+      timerMin: +e.target.value,
     });
   };
 
   onTimerSecChange = (e) => {
     this.setState({
-      timerSec: e.target.value,
+      timerSec: +e.target.value,
     });
   };
 
