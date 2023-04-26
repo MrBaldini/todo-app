@@ -1,82 +1,58 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import PropTypes from 'prop-types';
 
 import Timer from '../timer';
 import './task.css';
 
-export default class Task extends Component {
-  constructor() {
-    super();
-    this.state = { label: '' };
-  }
+function Task({ onToggleDone, id, onDeleted, onEdit, item, onSubmitChanges, updateTaskDate, updateInterval }) {
+  const { label, timerMin, timerSec, date, done, edit, hide } = item;
+  const [changedLabel, setChangedLabel] = useState('');
 
-  componentDidMount() {
-    const { updateInterval, updateTaskDate } = this.props;
-    this.refreshTaskDate = setInterval(updateTaskDate, updateInterval);
-  }
+  useEffect(() => {
+    const refreshTaskDate = setInterval(updateTaskDate, updateInterval);
+    return () => clearInterval(refreshTaskDate);
+  }, []);
 
-  componentWillUnmount() {
-    clearInterval(this.refreshTaskDate);
-  }
-
-  onLabelChange = (e) => {
-    this.setState({
-      label: e.target.value,
-    });
+  const onLabelChange = (e) => {
+    setChangedLabel(e.target.value);
   };
 
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    const { onSubmitChanges, id } = this.props;
-    const { label } = this.state;
-    onSubmitChanges(label, id);
-    this.setState({
-      label: e.target.value,
-    });
+    onSubmitChanges(changedLabel, id);
   };
 
-  render() {
-    const { onToggleDone, id, onDeleted, onEdit, item } = this.props;
-    const { label, timerMin, timerSec, date, done, edit, hide } = item;
+  let classNames;
+  if (done) classNames = 'completed';
+  if (edit) classNames = 'editing';
+  if (hide) classNames = 'hidden';
 
-    let classNames;
-    if (done) classNames = 'completed';
-    if (edit) classNames = 'editing';
-    if (hide) classNames = 'hidden';
-
-    return (
-      <div className={classNames}>
-        <div className="view">
-          <input className="toggle" type="checkbox" onChange={onToggleDone} checked={done} />
-          <label htmlFor={id}>
-            <span className="title">{label}</span>
-            <span className="description">
-              <Timer timerMin={timerMin} timerSec={timerSec} />
-            </span>
-            <span className="description">
-              created{' '}
-              {formatDistanceToNow(date, {
-                includeSeconds: true,
-                addSuffix: true,
-              })}
-            </span>
-          </label>
-          <button className="icon icon-edit" type="button" aria-label="Edit" onClick={onEdit} />
-          <button className="icon icon-destroy" type="button" aria-label="Delete" onClick={onDeleted} />
-        </div>
-        <form onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            className="edit"
-            defaultValue={label}
-            onChange={this.onLabelChange}
-            onClick={this.onLabelChange}
-          />
-        </form>
+  return (
+    <div className={classNames}>
+      <div className="view">
+        <input className="toggle" type="checkbox" onChange={onToggleDone} checked={done} />
+        <label htmlFor={id}>
+          <span className="title">{label}</span>
+          <span className="description">
+            <Timer timerMin={timerMin} timerSec={timerSec} />
+          </span>
+          <span className="description">
+            created{' '}
+            {formatDistanceToNow(date, {
+              includeSeconds: true,
+              addSuffix: true,
+            })}
+          </span>
+        </label>
+        <button className="icon icon-edit" type="button" aria-label="Edit" onClick={onEdit} />
+        <button className="icon icon-destroy" type="button" aria-label="Delete" onClick={onDeleted} />
       </div>
-    );
-  }
+      <form onSubmit={onSubmit}>
+        <input type="text" className="edit" defaultValue={label} onChange={onLabelChange} />
+      </form>
+    </div>
+  );
 }
 
 Task.defaultProps = {
@@ -96,3 +72,5 @@ Task.propTypes = {
   onDeleted: PropTypes.func,
   onEdit: PropTypes.func,
 };
+
+export default Task;

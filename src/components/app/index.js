@@ -1,11 +1,21 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import AppHeader from '../app-header';
 import AppMain from '../app-main';
 import './app.css';
 
-export default class App extends Component {
-  static toggleHideDefault = (arr, defaultArr = []) => {
+function App() {
+  const [todoData, setTodoData] = useState([]);
+  const [maxId, setMaxId] = useState(1);
+
+  const itemsLeft = todoData.filter((el) => !el.done).length;
+  const updateInterval = 60000;
+
+  useEffect(() => {
+    setMaxId((id) => id + 1);
+  }, [todoData]);
+
+  const toggleHideDefault = (arr, defaultArr = []) => {
     arr.forEach((el) => {
       const newItem = { ...el, hide: false };
       defaultArr.push(newItem);
@@ -14,7 +24,7 @@ export default class App extends Component {
     return defaultArr;
   };
 
-  static toggleProperty = (arr, id, propertyName, label = null) => {
+  const toggleProperty = (arr, id, propertyName, label = null) => {
     const index = arr.findIndex((el) => el.id === id);
     const oldItem = arr[index];
 
@@ -24,11 +34,11 @@ export default class App extends Component {
     return [...arr.slice(0, index), newItem, ...arr.slice(index + 1)];
   };
 
-  static toggleHideOnActive = (arr, propName) => {
+  const toggleHideOnActive = (arr, propName) => {
     const defaultArr = [];
     const newArr = [];
 
-    App.toggleHideDefault(arr, defaultArr);
+    toggleHideDefault(arr, defaultArr);
 
     defaultArr.forEach((el) => {
       let newItem = {};
@@ -44,11 +54,11 @@ export default class App extends Component {
     return newArr;
   };
 
-  static toggleHideOnCompleted = (arr, propName) => {
+  const toggleHideOnCompleted = (arr, propName) => {
     const defaultArr = [];
     const newArr = [];
 
-    App.toggleHideDefault(arr, defaultArr);
+    toggleHideDefault(arr, defaultArr);
 
     defaultArr.forEach((el) => {
       let newItem = {};
@@ -64,105 +74,23 @@ export default class App extends Component {
     return newArr;
   };
 
-  constructor() {
-    super();
-    this.maxId = 1;
-    this.updateInterval = 60000;
-    this.state = {
-      todoData: [],
-    };
-  }
-
-  updateTaskDate = () => {
-    this.setState(({ todoData }) => {
+  const updateTaskDate = () => {
+    setTodoData((data) => {
       const newArr = [];
-      todoData.forEach((el) => newArr.push(el));
-      return {
-        todoData: newArr,
-      };
+      data.forEach((el) => newArr.push(el));
+      return newArr;
     });
   };
 
-  deleteTask = (id) => {
-    this.setState(({ todoData }) => {
-      const index = todoData.findIndex((el) => el.id === id);
-
-      const newArr = [...todoData.slice(0, index), ...todoData.slice(index + 1)];
-      return {
-        todoData: newArr,
-      };
+  const deleteTask = (id) => {
+    setTodoData((data) => {
+      const index = data.findIndex((el) => el.id === id);
+      const newArr = [...data.slice(0, index), ...data.slice(index + 1)];
+      return newArr;
     });
   };
 
-  addTask = (text, timerMin, timerSec) => {
-    const newItem = this.createTask(text, timerMin, timerSec);
-
-    this.setState(({ todoData }) => {
-      const newArr = [...todoData, newItem];
-      return {
-        todoData: newArr,
-      };
-    });
-  };
-
-  onToggleDone = (id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: App.toggleProperty(todoData, id, 'done'),
-      };
-    });
-  };
-
-  onEditTask = (id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: App.toggleProperty(todoData, id, 'edit'),
-      };
-    });
-  };
-
-  onSubmitChanges = (label, id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: App.toggleProperty(todoData, id, 'edit', label),
-      };
-    });
-  };
-
-  onClearCompleted = () => {
-    const newArr = [];
-    const { todoData } = this.state;
-
-    todoData.forEach((el) => (el.done ? newArr.push(el.id) : el));
-
-    newArr.forEach((el) => this.deleteTask(el));
-  };
-
-  onSelectedAllFilter = () => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: App.toggleHideDefault(todoData),
-      };
-    });
-  };
-
-  onSelectedActiveFilter = () => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: App.toggleHideOnCompleted(todoData, 'hide'),
-      };
-    });
-  };
-
-  onSelectedCompletedFilter = () => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: App.toggleHideOnActive(todoData, 'hide'),
-      };
-    });
-  };
-
-  createTask(label, timerMin, timerSec) {
+  function createTask(label, timerMin, timerSec) {
     return {
       label,
       timerMin,
@@ -171,32 +99,80 @@ export default class App extends Component {
       done: false,
       edit: false,
       hide: false,
-      id: this.maxId++,
+      id: maxId,
     };
   }
 
-  render() {
-    const { todoData } = this.state;
-    const itemsLeft = todoData.filter((el) => !el.done).length;
+  const addTask = (text, timerMin, timerSec) => {
+    const newItem = createTask(text, timerMin, timerSec);
 
-    return (
-      <div className="todoapp">
-        <AppHeader onAddedTask={this.addTask} onSubmitChanges={this.onSubmitChanges} />
-        <AppMain
-          todos={todoData}
-          onToggleDone={this.onToggleDone}
-          updateTaskDate={this.updateTaskDate}
-          updateInterval={this.updateInterval}
-          onEdit={this.onEditTask}
-          onSubmitChanges={this.onSubmitChanges}
-          onDeleted={this.deleteTask}
-          itemsLeft={itemsLeft}
-          onSelectedAllFilter={this.onSelectedAllFilter}
-          onSelectedActiveFilter={this.onSelectedActiveFilter}
-          onSelectedCompletedFilter={this.onSelectedCompletedFilter}
-          onClearCompleted={this.onClearCompleted}
-        />
-      </div>
-    );
-  }
+    setTodoData((data) => {
+      const newArr = [...data, newItem];
+      return newArr;
+    });
+  };
+
+  const onToggleDone = (id) => {
+    setTodoData((data) => {
+      return toggleProperty(data, id, 'done');
+    });
+  };
+
+  const onEditTask = (id) => {
+    setTodoData((data) => {
+      return toggleProperty(data, id, 'edit');
+    });
+  };
+
+  const onSubmitChanges = (label, id) => {
+    setTodoData((data) => {
+      return toggleProperty(data, id, 'edit', label);
+    });
+  };
+
+  const onClearCompleted = () => {
+    const newArr = [];
+    todoData.forEach((el) => (el.done ? newArr.push(el.id) : el));
+    newArr.forEach((el) => deleteTask(el));
+  };
+
+  const onSelectedAllFilter = () => {
+    setTodoData((data) => {
+      return toggleHideDefault(data);
+    });
+  };
+
+  const onSelectedActiveFilter = () => {
+    setTodoData((data) => {
+      return toggleHideOnCompleted(data, 'hide');
+    });
+  };
+
+  const onSelectedCompletedFilter = () => {
+    setTodoData((data) => {
+      return toggleHideOnActive(data, 'hide');
+    });
+  };
+
+  return (
+    <div className="todoapp">
+      <AppHeader onAddedTask={addTask} onSubmitChanges={onSubmitChanges} />
+      <AppMain
+        todos={todoData}
+        onToggleDone={onToggleDone}
+        updateTaskDate={updateTaskDate}
+        updateInterval={updateInterval}
+        onEdit={onEditTask}
+        onSubmitChanges={onSubmitChanges}
+        onDeleted={deleteTask}
+        itemsLeft={itemsLeft}
+        onSelectedAllFilter={onSelectedAllFilter}
+        onSelectedActiveFilter={onSelectedActiveFilter}
+        onSelectedCompletedFilter={onSelectedCompletedFilter}
+        onClearCompleted={onClearCompleted}
+      />
+    </div>
+  );
 }
+
+export default App;
